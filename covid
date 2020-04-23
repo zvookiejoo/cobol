@@ -1,0 +1,25 @@
+      *--------------------------------
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COVID-19.
+       AUTHOR. Kirill Makhalov.
+      *-------------------------------- 
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT PAT-REC ASSIGN TO PATREC.
+      *-------------------------------- 
+       DATA DIVISION.
+       FILE SECTION.
+           FD PAT-REC RECORDING MODE F.
+           01 COUNTRY
+               05 NAME PIC X(50).
+               05 CODE PIC XX.
+               05 SLUG PIC X(50).
+               05 CONFIRMED-NEW PIC 9(6).
+               05 CONFIRMED-TOTAL PIC 9(8).
+               05 DEATHS-NEW PIC 9(6).
+               05 DEATHS-TOTAL PIC 9(7).
+               05 RECOVERED-NEW PIC 9(6).
+               05 RECOVERED-TOTAL PIC 9(8).
+      *-------------------------------- 
+       
