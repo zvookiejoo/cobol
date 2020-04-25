@@ -1,25 +1,153 @@
-      *--------------------------------
+      *****************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. COVID-19.
+       PROGRAM-ID.  COVID.
        AUTHOR. Kirill Makhalov.
-      *-------------------------------- 
+      *****************************************************************
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT PAT-REC ASSIGN TO PATREC.
-      *-------------------------------- 
+           SELECT COUNTRY-REC ASSIGN TO COUNTRYR.
+           SELECT PRINT-REC ASSIGN TO PRTLINE.
+      *****************************************************************
        DATA DIVISION.
        FILE SECTION.
-           FD PAT-REC RECORDING MODE F.
-           01 COUNTRY
-               05 NAME PIC X(50).
-               05 CODE PIC XX.
-               05 SLUG PIC X(50).
-               05 CONFIRMED-NEW PIC 9(6).
-               05 CONFIRMED-TOTAL PIC 9(8).
-               05 DEATHS-NEW PIC 9(6).
-               05 DEATHS-TOTAL PIC 9(7).
-               05 RECOVERED-NEW PIC 9(6).
-               05 RECOVERED-TOTAL PIC 9(8).
-      *-------------------------------- 
-       
+       FD  COUNTRY-REC
+           RECORDING MODE F.
+       01  INPUT-LINE PIC X(80).
+       FD  PRINT-REC
+           RECORDING MODE F.
+       01  OUTPUT-LINE PIC X(170).
+      *****************************************************************
+       WORKING-STORAGE SECTION.
+       01  HEADER-1.
+           05  TIMESTAMP        PIC X(9) VALUE 'TIMESTAMP'.
+           05  FILLER           PIC X(2) VALUE SPACE.
+           05  COUNTRY-NAME     PIC X(7) VALUE 'COUNTRY'.
+           05  FILLER           PIC X(38) VALUE SPACES.
+           05  COUNTRY-CODE     PIC X(7) VALUE 'COUNTRY'.
+           05  FILLER           PIC X VALUE SPACE.
+           05  SLUG             PIC X(4) VALUE 'SLUG'.
+           05  FILLER           PIC X(41) VALUE SPACES.
+           05  CASES-NEW        PIC X(5) VALUE 'CASES'.
+           05  FILLER           PIC XX VALUE SPACES.
+           05  CASES-TOTAL      PIC X(5) VALUE 'CASES'.
+           05  FILLER           PIC X(4) VALUE SPACES.
+           05  DEATHS-NEW       PIC X(6) VALUE 'DEATHS'.
+           05  FILLER           PIC X VALUE SPACES.
+           05  DEATHS-TOTAL     PIC X(6) VALUE 'DEATHS'.
+           05  FILLER           PIC X(3) VALUE SPACES.
+           05  RECOVERED-NEW    PIC X(9) VALUE 'RECOVERED'.
+           05  FILLER           PIC X VALUE SPACE.
+           05  RECOVERED-TOTAL  PIC X(9) VALUE 'RECOVERED'.
+       01  HEADER-2.
+           05  FILLER           PIC X(56) VALUE SPACES.
+           05  COUNTRY-CODE     PIC X(4) VALUE 'CODE'.
+           05  FILLER           PIC X(49) VALUE SPACES.
+           05  CASES-NEW        PIC X(3) VALUE 'NEW'.
+           05  FILLER           PIC X(4) VALUE SPACES.
+           05  CASES-TOTAL      PIC X(5) VALUE 'TOTAL'.
+           05  FILLER           PIC X(4) VALUE SPACE.
+           05  DEATHS-NEW       PIC X(3) VALUE 'NEW'.
+           05  FILLER           PIC X(4) VALUE SPACES.
+           05  DEATHS-TOTAL     PIC X(5) VALUE 'TOTAL'.
+           05  FILLER           PIC X(4) VALUE SPACES.
+           05  RECOVERED-NEW    PIC X(3) VALUE 'NEW'.
+           05  FILLER           PIC X(7) VALUE SPACES.
+           05  RECOVERED-TOTAL  PIC X(5) VALUE 'TOTAL'.
+           05  FILLER           PIC X(4) VALUE SPACES.
+       01 HEADER-DELIMIT.
+      * --- TIMESTAMP
+           05  FILLER           PIC X(10) VALUE '----------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- COUNTRY
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- COUNTRY CODE
+           05  FILLER           PIC X(7) VALUE '-------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- SLUG
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X(11) VALUE '-----------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- CASES NEW
+           05  FILLER           PIC X(6) VALUE '------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- CASES TOTAL
+           05  FILLER           PIC X(8) VALUE '--------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- DEATHS NEW
+           05  FILLER           PIC X(6) VALUE '------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- DEATHS TOTAL
+           05  FILLER           PIC X(8) VALUE '--------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- RECOVERED NEW
+           05  FILLER           PIC X(9) VALUE '---------'.
+           05  FILLER           PIC X VALUE SPACE.
+      * --- RECOVERED TOTAL
+           05  FILLER           PIC X(9) VALUE '---------'.
+           05  FILLER           PIC X VALUE SPACE.
+       01  REPORT-RECORD.
+           05 R-TIMESTAMP        PIC X(10).
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-COUNTRY-NAME     PIC X(44).
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-COUNTRY-CODE     PIC X(3).
+           05 FILLER             PIC X(5) VALUE SPACES.
+           05 R-SLUG             PIC X(44).
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-CASES-NEW        PIC X(5)9 JUST RIGHT.
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-CASES-TOTAL      PIC X(7)9 JUST RIGHT.
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-DEATHS-NEW       PIC X(5)9 JUST RIGHT.
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-DEATHS-TOTAL     PIC X(7)9 JUST RIGHT.
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-RECOVERED-NEW    PIC X(8)9 JUST RIGHT.
+           05 FILLER             PIC X VALUE SPACE.
+           05 R-RECOVERED-TOTAL  PIC X(8)9 JUST RIGHT.
+       01  LASTREC PIC X VALUE SPACE.
+      ******************************************************************
+       PROCEDURE DIVISION.
+       000-OPEN-FILES.
+           OPEN INPUT  COUNTRY-REC.
+           OPEN OUTPUT PRINT-REC.
+       100-WRITE-HEADERS.
+           WRITE OUTPUT-LINE FROM HEADER-1.
+           WRITE OUTPUT-LINE FROM HEADER-2.
+           WRITE OUTPUT-LINE FROM HEADER-DELIMIT.
+       200-READ-NEXT-RECORD.
+           PERFORM READ-RECORD.
+           PERFORM READ-RECORD
+            PERFORM UNTIL LASTREC = 'Y'
+            PERFORM WRITE-RECORD
+            PERFORM READ-RECORD
+            END-PERFORM
+           .
+       1000-EXIT.
+           CLOSE COUNTRY-REC.
+           CLOSE PRINT-REC.
+           STOP RUN.
+       READ-RECORD.
+           READ COUNTRY-REC
+           AT END MOVE 'Y' TO LASTREC
+           END-READ.
+       WRITE-RECORD.
+           UNSTRING INPUT-LINE DELIMITED ','
+           INTO  R-COUNTRY-NAME
+                 R-COUNTRY-CODE
+                 R-SLUG
+                 R-CASES-NEW
+                 R-CASES-TOTAL
+                 R-DEATHS-NEW
+                 R-DEATHS-TOTAL
+                 R-RECOVERED-NEW
+                 R-RECOVERED-TOTAL
+                 R-TIMESTAMP.
+           WRITE OUTPUT-LINE FROM REPORT-RECORD.
